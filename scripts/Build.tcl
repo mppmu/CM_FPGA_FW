@@ -1,4 +1,4 @@
-source ../scripts/settings.tcl
+source ${apollo_root_path}/scripts/settings.tcl
 
 
 #open_project $outputDir/../proj/$top.xpr
@@ -10,7 +10,7 @@ source ../scripts/settings.tcl
 set ip_to_regenerate [get_ips]
 for {set j 0} {$j < [llength $ip_to_regenerate ] } {incr j} {
     set ip_name [lindex $ip_to_regenerate $j]
-    set ip_xci ../cores/$ip_name/$ip_name.xci
+    set ip_xci ${apollo_root_path}/cores/$ip_name/$ip_name.xci
     if {[string length [get_files -q $ip_xci]]} {
 	puts "Building $ip_name \n\n"
 	generate_target {synthesis} [get_files $ip_xci]
@@ -66,5 +66,5 @@ write_checkpoint -force $outputDir/post_route
 #################################################################################
 # STEP#5: Generate files for os build
 #################################################################################
-source ../scripts/Generate_hwInfo.tcl
-source ../scripts/Generate_svf.tcl
+source ${apollo_root_path}/scripts/Generate_hwInfo.tcl
+source ${apollo_root_path}/scripts/Generate_svf.tcl

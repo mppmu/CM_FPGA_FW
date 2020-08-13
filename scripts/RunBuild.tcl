@@ -29,4 +29,4 @@ route_design -directive Explore
 #################################################################################
 # STEP#5: Generate files for os build
 #################################################################################
-source ../scripts/Generate_hwInfo.tcl
+source ${apollo_root_path}/scripts/Generate_hwInfo.tcl

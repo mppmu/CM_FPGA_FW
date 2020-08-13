@@ -15,6 +15,8 @@ clean_prebuild:
 # prebuild 
 #################################################################################
 prebuild: $(SLAVE_DEF_FILE)
+	mkdir -p ${MAKE_PATH}/os && \
+	mkdir -p ${MAKE_PATH}/kernel && \
 	LD_LIBRARY_PATH=$(CACTUS_LD_PATH) ./scripts/preBuild.py \
 			                     -s $(SLAVE_DEF_FILE) \
 				             -t $(ADDSLAVE_TCL_PATH) \

@@ -1,8 +1,10 @@
 #################################################################################
 # make stuff
 #################################################################################
+MAKE_PATH := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 #output markup
-OUTPUT_MARKUP= 2>&1 | tee ../make_log.txt | ccze -A
+OUTPUT_MARKUP= 2>&1 | tee ${MAKE_PATH}/make_log.txt | ccze -A
 
 #################################################################################
 # VIVADO stuff
@@ -16,17 +18,17 @@ VIVADO_SETUP=source $(VIVADO_SHELL) && mkdir -p proj && mkdir -p kernel/hw && cd
 #################################################################################
 # TCL scripts
 #################################################################################
-SETUP_TCL=scripts/Setup.tcl
-BUILD_TCL=scripts/Build.tcl
-SETUP_BUILD_TCL=scripts/SetupAndBuild.tcl
-HW_TCL=scripts/Run_hw.tcl
+SETUP_TCL=${MAKE_PATH}/scripts/Setup.tcl
+BUILD_TCL=${MAKE_PATH}/scripts/Build.tcl
+SETUP_BUILD_TCL=${MAKE_PATH}/scripts/SetupAndBuild.tcl
+HW_TCL=${MAKE_PATH}/scripts/Run_hw.tcl
 
 #################################################################################
 # Source files
 #################################################################################
-PL_PATH=../src
-BD_PATH=../bd
-CORES_PATH=../cores
+PL_PATH=${MAKE_PATH}/src
+BD_PATH=${MAKE_PATH}/bd
+CORES_PATH=${MAKE_PATH}/cores
 
 SYM_LNK_XMLS = $(shell find ./ -type l)
 MAP_OBJS = $(patsubst %.xml, %_map.vhd, $(SYM_LNK_XMLS))
@@ -36,7 +38,7 @@ PKG_OBJS = $(patsubst %.xml, %_PKG.vhd, $(SYM_LNK_XMLS))
 # Short build names
 #################################################################################
 
-BIT=./bit/top.bit
+BIT=${MAKE_PATH}/bit/top.bit
 
 .SECONDARY:
 
@@ -62,19 +64,19 @@ endif
 #################################################################################
 clean_ip:
 	@echo "Cleaning up ip dcps"
-	@find ./cores -type f -name '*.dcp' -delete
+	@find ${MAKE_PATH}/cores -type f -name '*.dcp' -delete
 clean_bd:
 	@echo "Cleaning up bd generated files"
-	@rm -rf ./bd/zynq_bd
-	@rm -rf ./bd/c2cSlave
+	@rm -rf ${MAKE_PATH}/bd/zynq_bd
+	@rm -rf ${MAKE_PATH}/bd/c2cSlave
 clean_bit:
 	@echo "Cleaning up bit files"
-	@rm -rf ./bit/*
+	@rm -rf ${MAKE_PATH}/bit/*
 clean_os:
 	@echo "Clean OS hw files"
-	@rm -f kernel/hw/*
+	@rm -f ${MAKE_PATH}/kernel/hw/*
 clean: clean_bd clean_ip clean_bit clean_os
-	@rm -rf ./proj/*
+	@rm -rf ${MAKE_PATH}/proj/*
 	@echo "Cleaning up"
 
 
@@ -93,7 +95,7 @@ open_impl :
 	vivado post_route.dcp
 open_hw :
 	@$(VIVADO_SETUP) &&\
-	vivado -source ../$(HW_TCL)
+	vivado -source $(HW_TCL) -tclargs "${MAKE_PATH}"
 
 
 #################################################################################
@@ -107,10 +109,10 @@ interactive :
 $(BIT)	:
 	@mkdir -p bit
 	@$(VIVADO_SETUP) &&\
-	vivado $(VIVADO_FLAGS) -source ../$(SETUP_BUILD_TCL) $(OUTPUT_MARKUP)
+	vivado $(VIVADO_FLAGS) -source $(SETUP_BUILD_TCL) -tclargs ${MAKE_PATH} $(OUTPUT_MARKUP)
 SVF	:
 	@$(VIVADO_SETUP) &&\
-	vivado $(VIVADO_FLAGS) -source ../scripts/Generate_svf.tcl $(OUTPUT_MARKUP)
+	vivado $(VIVADO_FLAGS) -source ${MAKE_PATH}/scripts/Generate_svf.tcl -tclargs "${MAKE_PATH}" $(OUTPUT_MARKUP)
 
 
 #################################################################################

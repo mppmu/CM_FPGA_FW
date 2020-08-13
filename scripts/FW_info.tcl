@@ -1,4 +1,4 @@
-proc build_fw_version {path } {
+proc build_fw_version {{path "./"} } {
     ## Set output filename
     set outFile $path/fw_version.vhd
     set outFile_fd [open $outFile "w"]

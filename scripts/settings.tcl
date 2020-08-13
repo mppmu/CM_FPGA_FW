@@ -7,3 +7,4 @@ set top top
 
 set outputDir ./
 
+puts "Using path: ${apollo_root_path}"
